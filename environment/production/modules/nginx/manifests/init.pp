@@ -1,4 +1,10 @@
-class nginx( $listening_port =undef,
+File {
+	mode => '644',
+	ensure => present,
+	}
+
+class nginx( $nginx_user = 'www-data',
+        $listening_port = 80,
 	$proxy_url = undef){
 
 	include nginx::package
@@ -6,9 +12,19 @@ class nginx( $listening_port =undef,
 	file {'/etc/nginx/nginx.conf':
        		owner => 'root',
         	group => 'root',
-        	mode => '644',
-	        ensure => present,
-       		content => template('nginx/nginx.conf.erb')
+       		source => 'puppet:///modules/nginx/nginx.conf',
+	}
+
+        file {'/etc/nginx/conf.d':
+		ensure => directory,
+		owner => 'root',
+		group => 'root',
+	}
+
+	file {'/etc/nginx/conf.d/my_server.conf':
+		owner => 'root',
+		group => 'root',
+		content => template('nginx/my_server.conf.erb'),
 	}
 
 	service{'nginx':
