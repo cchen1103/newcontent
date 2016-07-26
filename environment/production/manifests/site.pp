@@ -1,5 +1,6 @@
 node 'default' {
-  include nginx::config
-  include nginx::service
-  Class['nginx'] -> Class['nginx::config'] ~> Class['nginx::service']
+	class {'nginx':
+ 		listening_port => 8000,
+		proxy_url => 'https://github.com/puppetlabs/exercise-webpage',
+	}
 }
