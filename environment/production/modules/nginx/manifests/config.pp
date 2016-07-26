@@ -9,5 +9,12 @@ class nginx::config (
 		ensure => present,
 		content => template('puppet:///modules/nginx/nginx.erb')
 	}
+
+	file {'/var/www':
+		ensure => directory,
+		owner => 'www-data',
+		group => 'www-data',
+		mode => '644',
+	}
 }
 

@@ -1,10 +1,10 @@
 http {
     server {
         listen <%= listening_port %>;
-        root /tmp/;
+        root /var/www/;
 
         location / {
-            proxy_pass <%= proxy_url %>;
+            root /var/www;
         }
     }
 }

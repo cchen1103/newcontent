@@ -1,14 +1,12 @@
-group {'nginx':
-    ensure => 'present',
-    gid => '1010',
+group {'www-data':
+    ensure => present,
 }
 
-user {'nginx':
-    name => 'nginx',
-    ensure => 'present',
-    uid => '1010',
-    groups => ['nginx'],
+user {'www-data':
+    name => 'www-data',
+    ensure => present,
+    groups => ['www-data'],
     password => '!!',
     shell => '/sbin/nologin',
-    home => '/opt/nginx',
+    home => '/var/www',
 }
