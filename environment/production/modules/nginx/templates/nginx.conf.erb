@@ -1,0 +1,8 @@
+server {
+    listen <%= listening_port %>;
+    root /data/;
+
+    location / {
+		proxy_pass <%= $proxy_url %>
+    }
+}
