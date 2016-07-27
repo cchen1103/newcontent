@@ -1,10 +1,10 @@
 http {
     server {
         listen <%= listening_port %>;
-        root /var/www/;
+        root /var/www/html/;
 
         location / {
-            root /var/www;
+            root /var/www/html;
         }
     }
 }

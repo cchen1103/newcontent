@@ -1,30 +1,47 @@
+define remote_file(
+    $remote_location = undef,
+    $local_repo = undef,
+    $mode = '644'){
+        exec{"download_${title}":
+            command => "git clone $remote_location $local_repo",
+	    path => ['/usr/bin','/usr/sbin','/bin'],
+            creates => "$local_repo/$title",
+#            unless => "ls $local_repo/$title && false",
+        }
+}
+
 File {
 	mode => '644',
 	ensure => present,
 	}
 
-class nginx( $nginx_user = 'www-data',
-        $listening_port = 80,
-	$proxy_url = undef){
+class nginx($listening_port = 80,){
 
 	include nginx::package
 
-	file {'/etc/nginx/nginx.conf':
-       		owner => 'root',
-        	group => 'root',
-       		source => 'puppet:///modules/nginx/nginx.conf',
-	}
+        # nginx webserver configuration
+        file {'/etc/nginx/nginx.conf':
+                ensure => present,
+                owner => 'root',
+                group => 'root',
+                mode => '644',
+                source => 'puppet:///modules/nginx/nginx.conf',
+        }
 
         file {'/etc/nginx/conf.d':
-		ensure => directory,
-		owner => 'root',
-		group => 'root',
-	}
+                ensure => directory,
+                owner => 'root',
+                group => 'root',
+        }
 
-	file {'/etc/nginx/conf.d/my_server.conf':
-		owner => 'root',
-		group => 'root',
-		content => template('nginx/my_server.conf.erb'),
+        file {'/etc/nginx/conf.d/my_server.conf':
+                owner => 'root',
+                group => 'root',
+                content => template('nginx/my_server.conf.erb'),
+        }
+	
+	class {'nginx::webserver':
+		local_repo => '/etc/nginx/sites-available',
 	}
 
 	service{'nginx':
@@ -33,5 +50,5 @@ class nginx( $nginx_user = 'www-data',
 		hasstatus => true,
 	}
 
-	Package['nginx'] -> File['/etc/nginx/nginx.conf'] ~> Service['nginx']
+	Package['nginx'] -> File['/etc/nginx/nginx.conf'] -> Class['Nginx::Webserver'] ~> Service['nginx']
 }
